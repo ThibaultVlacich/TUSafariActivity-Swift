@@ -59,7 +59,7 @@ class TUSafariActivity: UIActivity {
                 
     override func canPerformWithActivityItems(activityItems: [AnyObject]) -> Bool {
         for activityItem in activityItems {
-            if activityItem is NSURL && UIApplication.sharedApplication().canOpenURL(activityItem as? NSURL) {
+            if activityItem is NSURL && UIApplication.sharedApplication().canOpenURL(activityItem as! NSURL) {
                 return true
             }
         }
