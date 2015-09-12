@@ -34,11 +34,7 @@ import UIKit
 
 class TUSafariActivity: UIActivity {
     
-    var _URL: NSURL
-    
-    override init() {
-        self._URL = NSURL()
-    }
+    var URL: NSURL?
     
     override func activityType() -> String {
         return NSStringFromClass(self.dynamicType)
@@ -74,13 +70,18 @@ class TUSafariActivity: UIActivity {
     override func prepareWithActivityItems(activityItems: [AnyObject]) {
         for activityItem in activityItems {
             if activityItem is NSURL {
-                self._URL = activityItem as! NSURL
+                self.URL = activityItem as! NSURL
             }
         }
     }
     
     override func performActivity() -> Void {
-        let completed = UIApplication.sharedApplication().openURL(self._URL)
+        guard let url = self.url else {
+            self.activityDidFinish(true)
+            return
+        }
+        
+        let completed = UIApplication.sharedApplication().openURL(url)
 
         self.activityDidFinish(completed)
     }
