@@ -34,32 +34,32 @@ import UIKit
 
 class TUSafariActivity: UIActivity {
     
-    var URL: NSURL?
+    var URL: Foundation.URL?
     
     override func activityType() -> String {
         return NSStringFromClass(self.dynamicType)
     }
         
     override func activityTitle() -> String {
-        let resourcesURL: NSURL = NSBundle(forClass: self.dynamicType).URLForResource("TUSafariActivity", withExtension: "bundle")!
-        let bundle: NSBundle = NSBundle(URL: resourcesURL)!
-        let defaultString: String = bundle.localizedStringForKey("Open in Safari", value: "Open in Safari", table: "TUSafariActivity")
+        let resourcesURL: Foundation.URL = Bundle(for: self.dynamicType).urlForResource("TUSafariActivity", withExtension: "bundle")!
+        let bundle: Bundle = Bundle(url: resourcesURL)!
+        let defaultString: String = bundle.localizedString(forKey: "Open in Safari", value: "Open in Safari", table: "TUSafariActivity")
         
-        return NSBundle.mainBundle().localizedStringForKey("Open in Safari", value: defaultString, table: nil)
+        return Bundle.main.localizedString(forKey: "Open in Safari", value: defaultString, table: nil)
     }
             
     override func activityImage() -> UIImage {
-        if UIImage.respondsToSelector(Selector("imageNamed:inBundle:compatibleWithTraitCollection:")) {
-            return UIImage(named: "TUSafariActivity.bundle/safari", inBundle: NSBundle(forClass: self.dynamicType), compatibleWithTraitCollection: nil)!
+        if UIImage.responds(to: Selector("imageNamed:inBundle:compatibleWithTraitCollection:")) {
+            return UIImage(named: "TUSafariActivity.bundle/safari", in: Bundle(for: self.dynamicType), compatibleWith: nil)!
         } else {
             // because pre iOS 8 doesn't allow embeded frameworks, our bundle will always be the main bundle
             return UIImage(named:"TUSafariActivity.bundle/safari-7")!
         }
     }
                 
-    override func canPerformWithActivityItems(activityItems: [AnyObject]) -> Bool {
+    override func canPerform(withActivityItems activityItems: [AnyObject]) -> Bool {
         for activityItem in activityItems {
-            if activityItem is NSURL && UIApplication.sharedApplication().canOpenURL(activityItem as! NSURL) {
+            if activityItem is Foundation.URL && UIApplication.shared().canOpenURL(activityItem as! Foundation.URL) {
                 return true
             }
         }
@@ -67,21 +67,21 @@ class TUSafariActivity: UIActivity {
         return false;
     }
     
-    override func prepareWithActivityItems(activityItems: [AnyObject]) {
+    override func prepare(withActivityItems activityItems: [AnyObject]) {
         for activityItem in activityItems {
-            if activityItem is NSURL {
-                self.URL = activityItem as? NSURL
+            if activityItem is Foundation.URL {
+                self.URL = activityItem as? Foundation.URL
             }
         }
     }
     
-    override func performActivity() -> Void {
+    override func perform() -> Void {
         guard let url = self.URL else {
             self.activityDidFinish(true)
             return
         }
         
-        let completed = UIApplication.sharedApplication().openURL(url)
+        let completed = UIApplication.shared().openURL(url)
 
         self.activityDidFinish(completed)
     }
